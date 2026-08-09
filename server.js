@@ -51,11 +51,14 @@ app.get('/product/:slug', (req, res) => {
 });
 
 // Admin SPA
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
-});
-app.get('/admin/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
+app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
+app.get(['/admin', '/admin/*'], (req, res) => {
+  const adminFile = path.join(__dirname, 'public', 'admin', 'index.html');
+  if (fs.existsSync(adminFile)) {
+    res.sendFile(adminFile);
+  } else {
+    res.status(404).send('Admin file not found: public/admin/index.html');
+  }
 });
 
 const os = require('os');
