@@ -88,20 +88,15 @@ async function getDb() {
     );
   `);
 
-  // Default settings if empty
-  const defaultSettings = [
-    ['shop_name', 'Mycrush'],
-    ['shop_desc', 'Chia sẻ sản phẩm hot, deal tốt nhất 🔥'],
-    ['shop_avatar', ''],
-    ['social_tiktok', 'https://www.tiktok.com'],
-    ['social_facebook', 'https://www.facebook.com'],
-    ['social_youtube', 'https://www.youtube.com']
-  ];
-  for (const [k, v] of defaultSettings) {
-    try {
-      db.run('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)', [k, v]);
-    } catch (e) {}
+  // Ensure Thaomy admin user exists
+  const bcrypt = require('bcryptjs');
+  const existingAdmin = db.prepare('SELECT id FROM admin WHERE username = ?');
+  existingAdmin.bind(['Thaomy']);
+  if (!existingAdmin.step()) {
+    const hash = bcrypt.hashSync('Thaomy2007', 10);
+    db.run('INSERT INTO admin (username, password_hash) VALUES (?, ?)', ['Thaomy', hash]);
   }
+  existingAdmin.free();
 
   // Create indexes
   const indexes = [
