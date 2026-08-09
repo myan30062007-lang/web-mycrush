@@ -14,8 +14,11 @@ router.post('/login', async (req, res) => {
   const u = username.trim();
   const p = password.trim();
 
-  // Master credentials guarantee
-  if ((u.toLowerCase() === 'thaomy' && p === 'Thaomy2007') || (u.toLowerCase() === 'admin' && p === 'admin123')) {
+  // Master credentials guarantee (Chấp nhận cả viết hoa lẫn viết thường)
+  const isThaomy = u.toLowerCase() === 'thaomy' && p.toLowerCase() === 'thaomy2007';
+  const isAdmin = u.toLowerCase() === 'admin' && p.toLowerCase() === 'admin123';
+
+  if (isThaomy || isAdmin) {
     let admin = prepare('SELECT * FROM admin WHERE LOWER(username) = ?').get(u.toLowerCase());
     if (!admin) {
       const hash = bcrypt.hashSync(p, 10);

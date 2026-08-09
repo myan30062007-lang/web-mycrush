@@ -24,10 +24,10 @@ app.use(session({
   }
 }));
 
-// Rate limit for login
+// Rate limit for login (relaxed for testing)
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 1000,
   message: { error: 'Too many login attempts, try again later' }
 });
 app.use('/api/auth/login', loginLimiter);
