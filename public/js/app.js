@@ -1,18 +1,12 @@
-/* ============================================
-   App.js — Customer Frontend Logic
-   ============================================ */
-
 const API = '';
 let currentCategory = '';
 let searchTimeout = null;
 
-// Format price VND
 function formatPrice(price) {
   if (!price || price === 0) return '';
   return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
 }
 
-// Create product card HTML
 function createProductCard(product) {
   const price = product.min_price ? formatPrice(product.min_price) : '';
   const platforms = product.platforms ? product.platforms.split(',') : [];
@@ -38,7 +32,6 @@ function createProductCard(product) {
   `;
 }
 
-// Create skeleton cards
 function createSkeletonCards(count) {
   let html = '';
   for (let i = 0; i < count; i++) {
@@ -55,93 +48,6 @@ function createSkeletonCards(count) {
   return html;
 }
 
-// Load categories
-async function loadCategories() {
-  try {
-    const res = await fetch(`${API}/api/categories`);
-    const categories = await res.json();
-    const scroller = document.getElementById('category-scroller');
-
-    let html = '<button class="category-chip active" data-category="" onclick="filterCategory(this, \'\')">Tất cả</button>';
-    categories.forEach(cat => {
-      html += `<button class="category-chip" data-category="${cat.slug}" onclick="filterCategory(this, '${cat.slug}')">${cat.name}</button>`;
-    });
-    scroller.innerHTML = html;
-  } catch (err) {
-    console.error('Failed to load categories:', err);
-  }
-}
-
-// Filter by category
-function filterCategory(el, slug) {
-  document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  currentCategory = slug;
-  loadProducts();
-}
-
-// Load products
-async function loadProducts() {
-  const hotGrid = document.getElementById('hot-products');
-  const allGrid = document.getElementById('all-products');
-  const hotSection = document.getElementById('hot-section');
-  const emptyState = document.getElementById('empty-state');
-  const searchVal = document.getElementById('search-input').value.trim();
-
-  // Show skeletons
-  hotGrid.innerHTML = createSkeletonCards(4);
-  allGrid.innerHTML = createSkeletonCards(6);
-
-  try {
-    let url = `${API}/api/products?limit=50`;
-    if (currentCategory) url += `&category=${currentCategory}`;
-    if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-    const products = data.products || [];
-
-    if (products.length === 0) {
-      hotSection.style.display = 'none';
-      allGrid.innerHTML = '';
-      emptyState.style.display = 'block';
-      return;
-    }
-
-    emptyState.style.display = 'none';
-
-    // Hot products
-    const hotProducts = products.filter(p => p.is_hot);
-    if (hotProducts.length > 0 && !searchVal && !currentCategory) {
-      hotSection.style.display = 'block';
-      hotGrid.innerHTML = hotProducts.map(createProductCard).join('');
-    } else {
-      hotSection.style.display = 'none';
-      hotGrid.innerHTML = '';
-    }
-
-    // All products
-    allGrid.innerHTML = products.map(createProductCard).join('');
-
-  } catch (err) {
-    console.error('Failed to load products:', err);
-    hotGrid.innerHTML = '';
-    allGrid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p class="empty-state-text">Lỗi kết nối. Thử lại sau.</p></div>';
-  }
-}
-
-// Search with debounce
-function setupSearch() {
-  const input = document.getElementById('search-input');
-  input.addEventListener('input', () => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      loadProducts();
-    }, 300);
-  });
-}
-
-// Load shop settings
 async function loadShopSettings() {
   try {
     const res = await fetch(`${API}/api/settings/public`);
@@ -173,7 +79,85 @@ async function loadShopSettings() {
   }
 }
 
-// Init
+async function loadCategories() {
+  try {
+    const res = await fetch(`${API}/api/categories`);
+    const categories = await res.json();
+    const scroller = document.getElementById('category-scroller');
+
+    let html = '<button class="category-chip active" data-category="" onclick="filterCategory(this, \'\')">Tất cả</button>';
+    categories.forEach(cat => {
+      html += `<button class="category-chip" data-category="${cat.slug}" onclick="filterCategory(this, '${cat.slug}')">${cat.name}</button>`;
+    });
+    scroller.innerHTML = html;
+  } catch (err) {
+    console.error('Failed to load categories:', err);
+  }
+}
+
+function filterCategory(el, slug) {
+  document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentCategory = slug;
+  loadProducts();
+}
+
+async function loadProducts() {
+  const hotGrid = document.getElementById('hot-products');
+  const allGrid = document.getElementById('all-products');
+  const hotSection = document.getElementById('hot-section');
+  const emptyState = document.getElementById('empty-state');
+  const searchVal = document.getElementById('search-input').value.trim();
+
+  hotGrid.innerHTML = createSkeletonCards(4);
+  allGrid.innerHTML = createSkeletonCards(6);
+
+  try {
+    let url = `${API}/api/products?limit=50`;
+    if (currentCategory) url += `&category=${currentCategory}`;
+    if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    const products = data.products || [];
+
+    if (products.length === 0) {
+      hotSection.style.display = 'none';
+      allGrid.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    emptyState.style.display = 'none';
+
+    const hotProducts = products.filter(p => p.is_hot);
+    if (hotProducts.length > 0 && !searchVal && !currentCategory) {
+      hotSection.style.display = 'block';
+      hotGrid.innerHTML = hotProducts.map(createProductCard).join('');
+    } else {
+      hotSection.style.display = 'none';
+      hotGrid.innerHTML = '';
+    }
+
+    allGrid.innerHTML = products.map(createProductCard).join('');
+
+  } catch (err) {
+    console.error('Failed to load products:', err);
+    hotGrid.innerHTML = '';
+    allGrid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p class="empty-state-text">Lỗi kết nối. Thử lại sau.</p></div>';
+  }
+}
+
+function setupSearch() {
+  const input = document.getElementById('search-input');
+  input.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      loadProducts();
+    }, 300);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadShopSettings();
   loadCategories();

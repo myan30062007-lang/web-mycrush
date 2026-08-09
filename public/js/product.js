@@ -1,7 +1,3 @@
-/* ============================================
-   Product.js — Product Detail Page Logic
-   ============================================ */
-
 const API = '';
 
 function formatPrice(price) {
@@ -32,11 +28,9 @@ async function loadProduct() {
 
     const product = await res.json();
 
-    // Update page title
     document.title = `${product.name} — Tiệm nhà Me`;
     document.getElementById('product-back-title').textContent = product.name;
 
-    // Hero image
     const imgContainer = document.getElementById('product-image-container');
     if (product.image_url) {
       imgContainer.innerHTML = `<img class="product-hero-image" src="${product.image_url}" alt="${product.name}">`;
@@ -44,7 +38,6 @@ async function loadProduct() {
       imgContainer.innerHTML = `<div style="width:100%;aspect-ratio:1;background:var(--bg-secondary);display:flex;align-items:center;justify-content:center;font-size:4rem;">📦</div>`;
     }
 
-    // Product info
     const minPrice = product.links && product.links.length > 0
       ? Math.min(...product.links.filter(l => l.price > 0).map(l => l.price))
       : 0;
@@ -55,7 +48,6 @@ async function loadProduct() {
       ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
     `;
 
-    // Buy links
     const buySection = document.getElementById('buy-section');
     if (product.links && product.links.length > 0) {
       let linksHtml = '<div class="buy-section-title">🛒 Mua tại</div>';
@@ -73,7 +65,6 @@ async function loadProduct() {
       });
       buySection.innerHTML = linksHtml;
 
-      // Sticky buy bar
       const stickyBar = document.getElementById('sticky-buy-bar');
       if (product.links.length === 1) {
         const l = product.links[0];
@@ -88,18 +79,13 @@ async function loadProduct() {
 
   } catch (err) {
     console.error('Failed to load product:', err);
-    document.getElementById('product-info').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">⚠️</div>
-        <p class="empty-state-text">Lỗi kết nối</p>
-      </div>`;
   }
 }
 
 async function trackAndBuy(linkId, url) {
   try {
     await fetch(`${API}/api/links/${linkId}/click`, { method: 'POST' });
-  } catch (e) { /* ignore */ }
+  } catch (e) {}
   window.open(url, '_blank');
 }
 

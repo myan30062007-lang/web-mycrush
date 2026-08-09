@@ -34,8 +34,6 @@
 
   <!-- ADMIN APP -->
   <div class="admin-layout" id="admin-app" style="display:none;">
-
-    <!-- Desktop Sidebar -->
     <aside class="desktop-sidebar" id="desktop-sidebar" style="display:none;">
       <div class="sidebar-logo">💖 Tiệm nhà Me</div>
       <a class="sidebar-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
@@ -59,9 +57,7 @@
       </a>
     </aside>
 
-    <!-- Main Content -->
     <main class="admin-main" id="admin-main">
-      <!-- Mobile Header -->
       <header class="admin-header" id="admin-header">
         <span class="admin-header-title" id="page-title">Dashboard</span>
         <div class="admin-header-actions">
@@ -71,8 +67,7 @@
       </header>
 
       <div class="admin-content">
-
-        <!-- DASHBOARD PAGE -->
+        <!-- DASHBOARD -->
         <div class="admin-page active" id="page-dashboard">
           <div class="stats-grid" id="stats-grid">
             <div class="stat-card"><div class="stat-label">Lượt xem</div><div class="stat-value accent" id="stat-views">—</div></div>
@@ -81,35 +76,27 @@
             <div class="stat-card"><div class="stat-label">Sản phẩm</div><div class="stat-value info" id="stat-products">—</div></div>
           </div>
 
-          <div class="admin-section-header">
-            <div class="admin-section-title">🏆 Top sản phẩm</div>
-          </div>
+          <div class="admin-section-header"><div class="admin-section-title">🏆 Top sản phẩm</div></div>
           <div class="top-products-list" id="top-products-list"></div>
 
-          <div class="admin-section-header">
-            <div class="admin-section-title">📡 Nguồn truy cập</div>
-          </div>
+          <div class="admin-section-header"><div class="admin-section-title">📡 Nguồn truy cập</div></div>
           <div style="padding: 0 16px 16px;" id="traffic-sources"></div>
         </div>
 
-        <!-- PRODUCTS PAGE -->
+        <!-- PRODUCTS -->
         <div class="admin-page" id="page-products">
           <div class="product-list-header">
             <div class="product-search-bar">
               <span>🔎</span>
               <input type="text" id="admin-search" placeholder="Tìm sản phẩm..." oninput="debounceAdminSearch()">
             </div>
-            <button class="filter-btn" onclick="openQuickAddForm()" title="Thêm nhanh">
-              ⚡ Nhanh
-            </button>
-            <button class="filter-btn" onclick="openFilterSheet()">
-              <span>⚙️</span> Lọc
-            </button>
+            <button class="filter-btn" onclick="openQuickAddForm()" title="Thêm nhanh">⚡ Nhanh</button>
+            <button class="filter-btn" onclick="openFilterSheet()">⚙️ Lọc</button>
           </div>
           <div class="product-list" id="admin-product-list"></div>
         </div>
 
-        <!-- CATEGORIES PAGE -->
+        <!-- CATEGORIES -->
         <div class="admin-page" id="page-categories">
           <div class="product-list-header">
             <span style="flex:1;font-weight:600;">Danh mục</span>
@@ -118,13 +105,12 @@
           <div class="category-list" id="category-list"></div>
         </div>
 
-        <!-- ANALYTICS PAGE -->
+        <!-- ANALYTICS -->
         <div class="admin-page" id="page-analytics">
           <div class="date-filter" id="analytics-date-filter">
             <button class="date-chip active" data-days="1" onclick="filterAnalytics(this,1)">Hôm nay</button>
             <button class="date-chip" data-days="7" onclick="filterAnalytics(this,7)">7 ngày</button>
             <button class="date-chip" data-days="30" onclick="filterAnalytics(this,30)">30 ngày</button>
-            <button class="date-chip" data-days="90" onclick="filterAnalytics(this,90)">90 ngày</button>
           </div>
           <div class="stats-grid" id="analytics-stats-grid">
             <div class="stat-card"><div class="stat-label">Lượt xem</div><div class="stat-value accent" id="ana-views">—</div></div>
@@ -138,7 +124,7 @@
           <div class="top-products-list" id="analytics-top-products"></div>
         </div>
 
-        <!-- SETTINGS PAGE -->
+        <!-- SETTINGS -->
         <div class="admin-page" id="page-settings">
           <div class="settings-section">
             <div class="admin-section-title" style="margin-bottom:16px;">🏪 Cấu hình Shop</div>
@@ -176,42 +162,33 @@
             </div>
           </div>
         </div>
-
       </div>
 
-      <!-- FAB -->
       <button class="fab" id="fab-add" onclick="openProductForm()" title="Thêm sản phẩm">+</button>
     </main>
 
-    <!-- Mobile Bottom Nav -->
     <nav class="bottom-nav" id="bottom-nav">
       <button class="bottom-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
-        <span class="nav-icon">📊</span>
-        <span>Dashboard</span>
+        <span class="nav-icon">📊</span><span>Dashboard</span>
       </button>
       <button class="bottom-nav-item" data-page="products" onclick="navigateTo('products')">
-        <span class="nav-icon">📦</span>
-        <span>Sản phẩm</span>
+        <span class="nav-icon">📦</span><span>Sản phẩm</span>
       </button>
       <button class="bottom-nav-item" data-page="analytics" onclick="navigateTo('analytics')">
-        <span class="nav-icon">📈</span>
-        <span>Analytics</span>
+        <span class="nav-icon">📈</span><span>Analytics</span>
       </button>
       <button class="bottom-nav-item" data-page="settings" onclick="navigateTo('settings')">
-        <span class="nav-icon">⚙️</span>
-        <span>Cài đặt</span>
+        <span class="nav-icon">⚙️</span><span>Cài đặt</span>
       </button>
     </nav>
   </div>
 
-  <!-- BOTTOM SHEET -->
   <div class="bottom-sheet-overlay" id="bs-overlay" onclick="closeBottomSheet()"></div>
   <div class="bottom-sheet" id="bottom-sheet">
     <div class="bottom-sheet-handle"></div>
     <div id="bs-content"></div>
   </div>
 
-  <!-- MODAL -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal-content" id="modal-content">
       <div class="modal-header">
@@ -222,7 +199,6 @@
     </div>
   </div>
 
-  <!-- CONFIRM DIALOG -->
   <div class="confirm-overlay" id="confirm-overlay">
     <div class="confirm-dialog" id="confirm-dialog">
       <div class="confirm-title" id="confirm-title">Xác nhận</div>
@@ -234,7 +210,6 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div class="admin-toast" id="admin-toast"></div>
 
   <script src="/admin/js/admin.js"></script>
