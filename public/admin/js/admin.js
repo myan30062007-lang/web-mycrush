@@ -51,6 +51,8 @@ async function handleLogin(e) {
     if (res.ok) {
       checkAuth();
     } else {
+      const data = await res.json().catch(() => ({}));
+      error.textContent = data.error || 'Sai tài khoản hoặc mật khẩu';
       error.style.display = 'block';
     }
   } catch (err) {

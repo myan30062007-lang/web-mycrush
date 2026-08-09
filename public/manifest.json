@@ -1,7 +1,7 @@
 {
-  "name": "Mycrush Admin",
-  "short_name": "Mycrush",
-  "description": "Quản lý website Mycrush",
+  "name": "Tiệm nhà Me Admin",
+  "short_name": "Tiệm nhà Me",
+  "description": "Quản lý website Tiệm nhà Me",
   "start_url": "/admin",
   "display": "standalone",
   "background_color": "#0b0b12",

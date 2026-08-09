@@ -33,7 +33,7 @@ async function loadProduct() {
     const product = await res.json();
 
     // Update page title
-    document.title = `${product.name} — Mycrush`;
+    document.title = `${product.name} — Tiệm nhà Me`;
     document.getElementById('product-back-title').textContent = product.name;
 
     // Hero image
