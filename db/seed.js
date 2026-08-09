@@ -5,15 +5,11 @@ async function seed() {
   console.log('🌱 Seeding database...');
   await getDb();
 
-  // Create admin account
-  const existingAdmin = prepare('SELECT id FROM admin WHERE username = ?').get('admin');
-  if (!existingAdmin) {
-    const hash = bcrypt.hashSync('admin123', 10);
-    prepare('INSERT INTO admin (username, password_hash) VALUES (?, ?)').run('admin', hash);
-    console.log('✅ Admin account created (admin / admin123)');
-  } else {
-    console.log('⏭ Admin account already exists');
-  }
+  // Create/update admin account (Thaomy / Thaomy2007)
+  prepare('DELETE FROM admin').run();
+  const hash = bcrypt.hashSync('Thaomy2007', 10);
+  prepare('INSERT INTO admin (username, password_hash) VALUES (?, ?)').run('Thaomy', hash);
+  console.log('✅ Admin account set: Thaomy / Thaomy2007');
 
   // Create categories
   const categories = [
