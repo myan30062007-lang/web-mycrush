@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b12">
+  <title>Tiệm nhà Me Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <div class="login-logo">💖</div>
+      <h1 class="login-title">Tiệm nhà Me Admin</h1>
+      <p class="login-subtitle">Đăng nhập để quản lý website</p>
+      <form class="login-form" id="login-form" onsubmit="return handleLogin(event)">
+        <div class="login-error" id="login-error">Sai tài khoản hoặc mật khẩu</div>
+        <div class="form-group">
+          <label for="login-username">Tài khoản</label>
+          <input type="text" id="login-username" placeholder="Thaomy" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Mật khẩu</label>
+          <input type="password" id="login-password" placeholder="••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">Đăng nhập</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN APP -->
+  <div class="admin-layout" id="admin-app" style="display:none;">
+    <aside class="desktop-sidebar" id="desktop-sidebar" style="display:none;">
+      <div class="sidebar-logo">💖 Tiệm nhà Me</div>
+      <a class="sidebar-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a class="sidebar-nav-item" data-page="products" onclick="navigateTo('products')">
+        <span class="nav-icon">📦</span> Sản phẩm
+      </a>
+      <a class="sidebar-nav-item" data-page="categories" onclick="navigateTo('categories')">
+        <span class="nav-icon">📂</span> Danh mục
+      </a>
+      <a class="sidebar-nav-item" data-page="analytics" onclick="navigateTo('analytics')">
+        <span class="nav-icon">📈</span> Analytics
+      </a>
+      <a class="sidebar-nav-item" data-page="settings" onclick="navigateTo('settings')">
+        <span class="nav-icon">⚙️</span> Cài đặt
+      </a>
+      <div style="flex:1"></div>
+      <a class="sidebar-nav-item" onclick="handleLogout()" style="color:var(--danger);">
+        <span class="nav-icon">🚪</span> Đăng xuất
+      </a>
+    </aside>
+
+    <main class="admin-main" id="admin-main">
+      <header class="admin-header" id="admin-header">
+        <span class="admin-header-title" id="page-title">Dashboard</span>
+        <div class="admin-header-actions">
+          <a href="/" target="_blank" class="header-icon-btn" title="Xem website">👁</a>
+          <button class="header-icon-btn" onclick="handleLogout()" title="Đăng xuất">🚪</button>
+        </div>
+      </header>
+
+      <div class="admin-content">
+        <!-- DASHBOARD -->
+        <div class="admin-page active" id="page-dashboard">
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card"><div class="stat-label">Lượt xem</div><div class="stat-value accent" id="stat-views">—</div></div>
+            <div class="stat-card"><div class="stat-label">Lượt click</div><div class="stat-value success" id="stat-clicks">—</div></div>
+            <div class="stat-card"><div class="stat-label">CTR</div><div class="stat-value warning" id="stat-ctr">—</div></div>
+            <div class="stat-card"><div class="stat-label">Sản phẩm</div><div class="stat-value info" id="stat-products">—</div></div>
+          </div>
+
+          <div class="admin-section-header"><div class="admin-section-title">🏆 Top sản phẩm</div></div>
+          <div class="top-products-list" id="top-products-list"></div>
+
+          <div class="admin-section-header"><div class="admin-section-title">📡 Nguồn truy cập</div></div>
+          <div style="padding: 0 16px 16px;" id="traffic-sources"></div>
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="admin-page" id="page-products">
+          <div class="product-list-header">
+            <div class="product-search-bar">
+              <span>🔎</span>
+              <input type="text" id="admin-search" placeholder="Tìm sản phẩm..." oninput="debounceAdminSearch()">
+            </div>
+            <button class="filter-btn" onclick="openQuickAddForm()" title="Thêm nhanh">⚡ Nhanh</button>
+            <button class="filter-btn" onclick="openFilterSheet()">⚙️ Lọc</button>
+          </div>
+          <div class="product-list" id="admin-product-list"></div>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="admin-page" id="page-categories">
+          <div class="product-list-header">
+            <span style="flex:1;font-weight:600;">Danh mục</span>
+            <button class="btn btn-primary btn-sm" onclick="openCategoryForm()">+ Thêm</button>
+          </div>
+          <div class="category-list" id="category-list"></div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="admin-page" id="page-analytics">
+          <div class="date-filter" id="analytics-date-filter">
+            <button class="date-chip active" data-days="1" onclick="filterAnalytics(this,1)">Hôm nay</button>
+            <button class="date-chip" data-days="7" onclick="filterAnalytics(this,7)">7 ngày</button>
+            <button class="date-chip" data-days="30" onclick="filterAnalytics(this,30)">30 ngày</button>
+          </div>
+          <div class="stats-grid" id="analytics-stats-grid">
+            <div class="stat-card"><div class="stat-label">Lượt xem</div><div class="stat-value accent" id="ana-views">—</div></div>
+            <div class="stat-card"><div class="stat-label">Lượt click</div><div class="stat-value success" id="ana-clicks">—</div></div>
+            <div class="stat-card"><div class="stat-label">CTR</div><div class="stat-value warning" id="ana-ctr">—</div></div>
+            <div class="stat-card"><div class="stat-label">Published</div><div class="stat-value info" id="ana-published">—</div></div>
+          </div>
+          <div class="admin-section-header"><div class="admin-section-title">📡 Nguồn truy cập</div></div>
+          <div style="padding:0 16px 16px;" id="analytics-traffic"></div>
+          <div class="admin-section-header"><div class="admin-section-title">🏆 Top sản phẩm</div></div>
+          <div class="top-products-list" id="analytics-top-products"></div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="admin-page" id="page-settings">
+          <div class="settings-section">
+            <div class="admin-section-title" style="margin-bottom:16px;">🏪 Cấu hình Shop</div>
+            <form id="settings-form" onsubmit="return saveSettingsForm(event)">
+              <div class="form-group">
+                <label class="form-label">Tên Shop</label>
+                <input type="text" id="set-shop-name" placeholder="Tiệm nhà Me">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mô tả Shop</label>
+                <textarea id="set-shop-desc" rows="2" placeholder="Chia sẻ sản phẩm hot..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link TikTok Shop</label>
+                <input type="url" id="set-tiktok" placeholder="https://tiktok.com/...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link Facebook</label>
+                <input type="url" id="set-fb" placeholder="https://facebook.com/...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link YouTube</label>
+                <input type="url" id="set-yt" placeholder="https://youtube.com/...">
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" style="margin-bottom:20px;">Lưu cài đặt</button>
+            </form>
+
+            <div class="settings-item" onclick="window.open('/','_blank')">
+              <span class="settings-item-label">👁 Xem website khách</span>
+              <span class="settings-item-value">→</span>
+            </div>
+            <div class="settings-item" onclick="handleLogout()">
+              <span class="settings-item-label" style="color:var(--danger);">🚪 Đăng xuất</span>
+              <span class="settings-item-value"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="fab" id="fab-add" onclick="openProductForm()" title="Thêm sản phẩm">+</button>
+    </main>
+
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="bottom-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <span class="nav-icon">📊</span><span>Dashboard</span>
+      </button>
+      <button class="bottom-nav-item" data-page="products" onclick="navigateTo('products')">
+        <span class="nav-icon">📦</span><span>Sản phẩm</span>
+      </button>
+      <button class="bottom-nav-item" data-page="analytics" onclick="navigateTo('analytics')">
+        <span class="nav-icon">📈</span><span>Analytics</span>
+      </button>
+      <button class="bottom-nav-item" data-page="settings" onclick="navigateTo('settings')">
+        <span class="nav-icon">⚙️</span><span>Cài đặt</span>
+      </button>
+    </nav>
+  </div>
+
+  <div class="bottom-sheet-overlay" id="bs-overlay" onclick="closeBottomSheet()"></div>
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="bottom-sheet-handle"></div>
+    <div id="bs-content"></div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content" id="modal-content">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Modal</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-dialog" id="confirm-dialog">
+      <div class="confirm-title" id="confirm-title">Xác nhận</div>
+      <div class="confirm-message" id="confirm-message">Bạn chắc chắn?</div>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" onclick="closeConfirm()">Hủy</button>
+        <button class="btn btn-danger" id="confirm-action-btn" onclick="confirmAction()">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-toast" id="admin-toast"></div>
+
+  <script src="/admin/js/admin.js"></script>
+</body>
+</html>

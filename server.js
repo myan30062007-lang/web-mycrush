@@ -52,14 +52,14 @@ app.get('/product/:slug', (req, res) => {
 });
 
 // Admin SPA
-app.use('/admin', express.static(path.join(__dirname, 'public', 'admin')));
-app.get(['/admin', '/admin/*'], (req, res) => {
-  const adminFile = path.join(__dirname, 'public', 'admin', 'index.html');
-  if (fs.existsSync(adminFile)) {
-    res.sendFile(adminFile);
-  } else {
-    res.status(404).send('Admin file not found: public/admin/index.html');
-  }
+app.get(['/admin', '/admin/', '/admin/*'], (req, res) => {
+  const p1 = path.join(__dirname, 'public', 'admin', 'index.html');
+  const p2 = path.join(__dirname, 'public', 'admin.html');
+  const p3 = path.join(__dirname, 'admin', 'index.html');
+  if (fs.existsSync(p1)) return res.sendFile(p1);
+  if (fs.existsSync(p2)) return res.sendFile(p2);
+  if (fs.existsSync(p3)) return res.sendFile(p3);
+  res.status(404).send('Admin page file not found');
 });
 
 const os = require('os');
