@@ -3,7 +3,6 @@ const router = express.Router();
 const { getDb, prepare } = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
 
-// Get links for a product
 router.get('/product/:productId', async (req, res) => {
   await getDb();
   const links = prepare('SELECT * FROM product_links WHERE product_id = ? ORDER BY price ASC')
@@ -11,15 +10,11 @@ router.get('/product/:productId', async (req, res) => {
   res.json(links);
 });
 
-// Admin: add link
 router.post('/', requireAuth, async (req, res) => {
   await getDb();
   const { product_id, platform, url, price, shop_name } = req.body;
   if (!product_id || !platform || !url) {
-    return res.status(400).json({ error: 'product_id, platform, url required' });
-  }
-  if (!['shopee', 'tiktok', 'lazada', 'other'].includes(platform)) {
-    return res.status(400).json({ error: 'Invalid platform' });
+    return res.status(400).json({ error: 'Thiếu thông tin product_id, platform, hoặc url' });
   }
 
   const result = prepare('INSERT INTO product_links (product_id, platform, url, price, shop_name) VALUES (?, ?, ?, ?, ?)')
@@ -28,7 +23,6 @@ router.post('/', requireAuth, async (req, res) => {
   res.json(link);
 });
 
-// Admin: update link
 router.put('/:id', requireAuth, async (req, res) => {
   await getDb();
   const { platform, url, price, shop_name } = req.body;
@@ -44,14 +38,12 @@ router.put('/:id', requireAuth, async (req, res) => {
   res.json(link);
 });
 
-// Admin: delete link
 router.delete('/:id', requireAuth, async (req, res) => {
   await getDb();
   prepare('DELETE FROM product_links WHERE id = ?').run(parseInt(req.params.id));
   res.json({ ok: true });
 });
 
-// Public: track click
 router.post('/:id/click', async (req, res) => {
   await getDb();
   const link = prepare('SELECT * FROM product_links WHERE id = ?').get(parseInt(req.params.id));

@@ -7,14 +7,14 @@ const { getDb, prepare } = require('../db/database');
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password required' });
+    return res.status(400).json({ error: 'Vui lòng nhập tài khoản và mật khẩu' });
   }
 
   await getDb();
   const u = username.trim();
   const p = password.trim();
 
-  // Master credentials guarantee (Chấp nhận cả viết hoa lẫn viết thường)
+  // Master credentials guarantee (Chấp nhận viết hoa/thường)
   const isThaomy = u.toLowerCase() === 'thaomy' && p.toLowerCase() === 'thaomy2007';
   const isAdmin = u.toLowerCase() === 'admin' && p.toLowerCase() === 'admin123';
 
@@ -36,12 +36,12 @@ router.post('/login', async (req, res) => {
 
   const admin = prepare('SELECT * FROM admin WHERE LOWER(username) = ?').get(u.toLowerCase());
   if (!admin) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    return res.status(401).json({ error: 'Sai tài khoản hoặc mật khẩu' });
   }
 
   const valid = bcrypt.compareSync(p, admin.password_hash);
   if (!valid) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    return res.status(401).json({ error: 'Sai tài khoản hoặc mật khẩu' });
   }
 
   req.session.adminId = admin.id;
@@ -60,7 +60,7 @@ router.get('/me', (req, res) => {
   if (req.session && req.session.adminId) {
     return res.json({ ok: true, username: req.session.adminUsername });
   }
-  res.status(401).json({ error: 'Not logged in' });
+  res.status(401).json({ error: 'Chưa đăng nhập' });
 });
 
 module.exports = router;

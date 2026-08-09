@@ -15,7 +15,7 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');
 }
 
-// Public: list published products
+// Public: list products
 router.get('/', async (req, res) => {
   await getDb();
   const { search, category, status, platform, page = 1, limit = 20, admin } = req.query;
@@ -82,7 +82,7 @@ router.get('/:slug', async (req, res) => {
   `).get(req.params.slug);
 
   if (!product) {
-    return res.status(404).json({ error: 'Product not found' });
+    return res.status(404).json({ error: 'Sản phẩm không tồn tại' });
   }
 
   const links = prepare('SELECT * FROM product_links WHERE product_id = ? ORDER BY price ASC').all(product.id);
@@ -99,7 +99,7 @@ router.post('/', requireAuth, async (req, res) => {
   await getDb();
   const { name, description, category_id, image_url, status, is_hot } = req.body;
   if (!name) {
-    return res.status(400).json({ error: 'Product name required' });
+    return res.status(400).json({ error: 'Tên sản phẩm là bắt buộc' });
   }
 
   let slug = slugify(name);
@@ -125,7 +125,7 @@ router.put('/:id', requireAuth, async (req, res) => {
 
   const existing = prepare('SELECT * FROM products WHERE id = ?').get(id);
   if (!existing) {
-    return res.status(404).json({ error: 'Product not found' });
+    return res.status(404).json({ error: 'Sản phẩm không tồn tại' });
   }
 
   let newSlug = slug || existing.slug;
@@ -162,12 +162,11 @@ router.put('/:id', requireAuth, async (req, res) => {
 // Admin: delete product
 router.delete('/:id', requireAuth, async (req, res) => {
   await getDb();
-  // Delete related links and analytics first (sql.js doesn't always cascade)
   prepare('DELETE FROM analytics WHERE product_id = ?').run(parseInt(req.params.id));
   prepare('DELETE FROM product_links WHERE product_id = ?').run(parseInt(req.params.id));
   const result = prepare('DELETE FROM products WHERE id = ?').run(parseInt(req.params.id));
   if (result.changes === 0) {
-    return res.status(404).json({ error: 'Product not found' });
+    return res.status(404).json({ error: 'Sản phẩm không tồn tại' });
   }
   res.json({ ok: true });
 });
@@ -177,7 +176,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
   await getDb();
   const { status } = req.body;
   if (!['draft', 'published', 'hidden'].includes(status)) {
-    return res.status(400).json({ error: 'Invalid status' });
+    return res.status(400).json({ error: 'Trạng thái không hợp lệ' });
   }
   prepare('UPDATE products SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
     .run(status, parseInt(req.params.id));
@@ -189,14 +188,14 @@ router.post('/:id/duplicate', requireAuth, async (req, res) => {
   await getDb();
   const original = prepare('SELECT * FROM products WHERE id = ?').get(parseInt(req.params.id));
   if (!original) {
-    return res.status(404).json({ error: 'Product not found' });
+    return res.status(404).json({ error: 'Sản phẩm không tồn tại' });
   }
 
   const newSlug = original.slug + '-copy-' + Date.now();
   const result = prepare(`
     INSERT INTO products (name, slug, description, category_id, image_url, status, is_hot)
     VALUES (?, ?, ?, ?, ?, 'draft', ?)
-  `).run(original.name + ' (Copy)', newSlug, original.description, original.category_id, original.image_url, original.is_hot);
+  `).run(original.name + ' (Bản sao)', newSlug, original.description, original.category_id, original.image_url, original.is_hot);
 
   const links = prepare('SELECT * FROM product_links WHERE product_id = ?').all(original.id);
   for (const link of links) {

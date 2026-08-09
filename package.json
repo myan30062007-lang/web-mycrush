@@ -1,7 +1,7 @@
 {
-  "name": "mycrush-web",
+  "name": "tiemnhame-web",
   "version": "1.0.0",
-  "description": "Mycrush - Affiliate Product Website Mobile First",
+  "description": "Tiệm nhà Me - Affiliate Product Website Mobile First",
   "main": "server.js",
   "scripts": {
     "dev": "node server.js",

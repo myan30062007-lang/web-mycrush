@@ -3,6 +3,7 @@ const session = require('express-session');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,21 +15,21 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'mycrush-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'tiemnhame-secret-key-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days persistent session
+    maxAge: 30 * 24 * 60 * 60 * 1000,
     httpOnly: true,
     sameSite: 'lax'
   }
 }));
 
-// Rate limit for login (relaxed for testing)
+// Rate limit
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
-  message: { error: 'Too many login attempts, try again later' }
+  message: { error: 'Thử lại sau ít phút' }
 });
 app.use('/api/auth/login', loginLimiter);
 
@@ -45,7 +46,7 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/settings', require('./routes/settings'));
 
-// SPA routes - serve index.html for customer routes
+// Customer SPA
 app.get('/product/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'product.html'));
 });
@@ -62,7 +63,6 @@ app.get(['/admin', '/admin/*'], (req, res) => {
 });
 
 const os = require('os');
-
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
@@ -78,7 +78,7 @@ function getLocalIP() {
 const localIP = getLocalIP();
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running:`);
+  console.log(`🚀 Tiệm nhà Me server running:`);
   console.log(`💻 PC Access:    http://localhost:${PORT}`);
   console.log(`📱 Phone Access: http://${localIP}:${PORT}`);
   console.log(`⚙️ Mobile Admin:  http://${localIP}:${PORT}/admin`);

@@ -3,7 +3,6 @@ const router = express.Router();
 const { getDb, prepare } = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
 
-// Public: list categories
 router.get('/', async (req, res) => {
   await getDb();
   const categories = prepare(`
@@ -16,12 +15,11 @@ router.get('/', async (req, res) => {
   res.json(categories);
 });
 
-// Admin: create category
 router.post('/', requireAuth, async (req, res) => {
   await getDb();
   const { name, slug, sort_order } = req.body;
   if (!name) {
-    return res.status(400).json({ error: 'Category name required' });
+    return res.status(400).json({ error: 'Tên danh mục là bắt buộc' });
   }
 
   const catSlug = slug || name.toString()
@@ -38,13 +36,12 @@ router.post('/', requireAuth, async (req, res) => {
     res.json(category);
   } catch (e) {
     if (e.message && e.message.includes('UNIQUE')) {
-      return res.status(400).json({ error: 'Category slug already exists' });
+      return res.status(400).json({ error: 'Slug danh mục đã tồn tại' });
     }
     throw e;
   }
 });
 
-// Admin: update category
 router.put('/:id', requireAuth, async (req, res) => {
   await getDb();
   const { name, slug, sort_order } = req.body;
@@ -60,7 +57,6 @@ router.put('/:id', requireAuth, async (req, res) => {
   res.json(category);
 });
 
-// Admin: delete category
 router.delete('/:id', requireAuth, async (req, res) => {
   await getDb();
   prepare('DELETE FROM categories WHERE id = ?').run(parseInt(req.params.id));

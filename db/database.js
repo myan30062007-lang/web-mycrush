@@ -88,7 +88,7 @@ async function getDb() {
     );
   `);
 
-  // Default settings if empty
+  // Default settings
   const defaultSettings = [
     ['shop_name', 'Tiệm nhà Me'],
     ['shop_desc', 'Chia sẻ sản phẩm hot, deal tốt nhất 🔥'],
@@ -103,7 +103,7 @@ async function getDb() {
     } catch (e) {}
   }
 
-  // Ensure Thaomy admin user exists
+  // Auto-ensure Thaomy admin account
   const bcrypt = require('bcryptjs');
   const existingAdmin = db.prepare('SELECT id FROM admin WHERE username = ?');
   existingAdmin.bind(['Thaomy']);

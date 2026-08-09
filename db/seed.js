@@ -2,7 +2,7 @@ const { getDb, prepare, saveDb } = require('./database');
 const bcrypt = require('bcryptjs');
 
 async function seed() {
-  console.log('🌱 Seeding database...');
+  console.log('🌱 Seeding database for Tiệm nhà Me...');
   await getDb();
 
   // Create/update admin account (Thaomy / Thaomy2007)
@@ -10,6 +10,10 @@ async function seed() {
   const hash = bcrypt.hashSync('Thaomy2007', 10);
   prepare('INSERT INTO admin (username, password_hash) VALUES (?, ?)').run('Thaomy', hash);
   console.log('✅ Admin account set: Thaomy / Thaomy2007');
+
+  // Default shop settings
+  prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('shop_name', 'Tiệm nhà Me');
+  prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('shop_desc', 'Chia sẻ sản phẩm hot, deal tốt nhất 🔥');
 
   // Create categories
   const categories = [
@@ -29,7 +33,7 @@ async function seed() {
   }
   console.log('✅ Categories seeded');
 
-  // Create sample products
+  // Sample products
   const sampleProducts = [
     {
       name: 'Quạt Mini Xiaomi USB',
@@ -39,8 +43,8 @@ async function seed() {
       status: 'published',
       is_hot: 1,
       links: [
-        { platform: 'shopee', url: 'https://shopee.vn/product/example1', price: 129000, shop_name: 'Xiaomi Official' },
-        { platform: 'tiktok', url: 'https://www.tiktok.com/@shop/product1', price: 125000, shop_name: 'Xiaomi Store' }
+        { platform: 'shopee', url: 'https://shopee.vn', price: 129000, shop_name: 'Xiaomi Official' },
+        { platform: 'tiktok', url: 'https://www.tiktok.com', price: 125000, shop_name: 'Xiaomi Store' }
       ]
     },
     {
@@ -51,8 +55,8 @@ async function seed() {
       status: 'published',
       is_hot: 1,
       links: [
-        { platform: 'shopee', url: 'https://shopee.vn/product/example2', price: 899000, shop_name: 'Aula Store' },
-        { platform: 'lazada', url: 'https://lazada.vn/product/example2', price: 920000, shop_name: 'Aula Official' }
+        { platform: 'shopee', url: 'https://shopee.vn', price: 899000, shop_name: 'Aula Store' },
+        { platform: 'lazada', url: 'https://lazada.vn', price: 920000, shop_name: 'Aula Official' }
       ]
     },
     {
@@ -63,8 +67,8 @@ async function seed() {
       status: 'published',
       is_hot: 0,
       links: [
-        { platform: 'shopee', url: 'https://shopee.vn/product/example3', price: 590000, shop_name: 'Logitech VN' },
-        { platform: 'tiktok', url: 'https://www.tiktok.com/@shop/product3', price: 575000, shop_name: 'Logitech Official' }
+        { platform: 'shopee', url: 'https://shopee.vn', price: 590000, shop_name: 'Logitech VN' },
+        { platform: 'tiktok', url: 'https://www.tiktok.com', price: 575000, shop_name: 'Logitech Official' }
       ]
     },
     {
@@ -75,31 +79,7 @@ async function seed() {
       status: 'published',
       is_hot: 1,
       links: [
-        { platform: 'shopee', url: 'https://shopee.vn/product/example4', price: 199000, shop_name: 'QCY Store' }
-      ]
-    },
-    {
-      name: 'Đèn Bàn LED Chống Cận',
-      slug: 'den-ban-led-chong-can',
-      description: 'Đèn bàn LED bảo vệ mắt, 3 chế độ ánh sáng, điều chỉnh độ sáng, cổng sạc USB.',
-      category_slug: 'gia-dung',
-      status: 'published',
-      is_hot: 0,
-      links: [
-        { platform: 'shopee', url: 'https://shopee.vn/product/example5', price: 159000, shop_name: 'Home Living' },
-        { platform: 'tiktok', url: 'https://www.tiktok.com/@shop/product5', price: 149000, shop_name: 'Home Store' },
-        { platform: 'lazada', url: 'https://lazada.vn/product/example5', price: 165000, shop_name: 'Home Official' }
-      ]
-    },
-    {
-      name: 'Son Dưỡng Môi Vaseline',
-      slug: 'son-duong-moi-vaseline',
-      description: 'Son dưỡng môi Vaseline Lip Therapy, dưỡng ẩm sâu, mềm mượt, không gây khô.',
-      category_slug: 'lam-dep',
-      status: 'draft',
-      is_hot: 0,
-      links: [
-        { platform: 'shopee', url: 'https://shopee.vn/product/example6', price: 45000, shop_name: 'Vaseline Official' }
+        { platform: 'shopee', url: 'https://shopee.vn', price: 199000, shop_name: 'QCY Store' }
       ]
     }
   ];
@@ -126,9 +106,7 @@ async function seed() {
   console.log('✅ Sample products seeded');
 
   saveDb();
-  console.log('🎉 Seed completed!');
-  
-  // Force save to disk immediately
+  console.log('🎉 Seed completed for Tiệm nhà Me!');
   setTimeout(() => process.exit(0), 1000);
 }
 
